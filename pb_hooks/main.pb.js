@@ -1,10 +1,4 @@
 routerAdd("GET", "/api/vehicles", (c) => {
-    let pageSize = c.request.url.query().get("pageSize");
-    let pageNo = c.request.url.query().get("pageNo");
-
-    pageSize = Number(pageSize) > 0 ? Number(pageSize) : 20;
-    pageNo = Number(pageNo) > 0 ? Number(pageNo) : 1;
-
     const vehicleTypeId = c.request.url.query().get("vehicleTypeId")
     const vehicleOptionId = c.request.url.query().get("vehicleOptionId")
     const agencyId = c.request.url.query().get("agencyId")
@@ -62,7 +56,6 @@ routerAdd("GET", "/api/vehicles", (c) => {
             ${filterSql}
             GROUP BY v.id
             ORDER BY v.created DESC 
-            LIMIT ${Number(pageSize)} OFFSET ${(Number(pageNo) - 1) * Number(pageSize)}
         `)
         .all(vehicleList)
 
