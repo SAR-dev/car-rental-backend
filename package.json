@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --watch pb_hooks --ext js,json,html --exec \"./pocketbase.exe serve --dev\"",
-    "typegen": "pocketbase-typegen --db ./pb_data/data.db --out types.ts"
+    "typegen": "pocketbase-typegen --db ./pb_data/data.db --out types.ts",
+    "version": "pocketbase.exe --version"
   },
   "keywords": [],
   "author": "",
