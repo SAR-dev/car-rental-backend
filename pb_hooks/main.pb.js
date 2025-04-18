@@ -49,10 +49,11 @@ routerAdd("GET", "/api/vehicles", (c) => {
                 v.fuelType,
                 v.noOfDoors,
                 v.noOfSeats,
-                '/api/files/vehicles/' || v.id || '/' || REPLACE(v.images ->> 0, '"', '') AS image,
+                '/api/files/images/' || i.id || '/' || coalesce(i.file, '') AS image,
                 coalesce(MIN(vp.basePrice), 0) AS minPrice
             FROM vehicles v 
             LEFT JOIN vehiclePackages vp ON vp.vehicle = v.id
+            LEFT JOIN images i ON i.id = REPLACE(v.images ->> 0, '"', '')
             ${filterSql}
             GROUP BY v.id
             ORDER BY v.created DESC 
