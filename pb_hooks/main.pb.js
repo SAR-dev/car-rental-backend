@@ -1,6 +1,6 @@
 routerAdd("GET", "/api/vehicles", (c) => {
     const vehicleTypeId = c.request.url.query().get("vehicleTypeId")
-    const vehicleOptionId = c.request.url.query().get("vehicleOptionId")
+    const vehicleOptionIds = c.request.url.query().get("vehicleOptionIds")
     const agencyId = c.request.url.query().get("agencyId")
     const transmissionType = c.request.url.query().get("transmissionType")
     const fuelType = c.request.url.query().get("fuelType")
@@ -8,7 +8,7 @@ routerAdd("GET", "/api/vehicles", (c) => {
     const noOfSeats = c.request.url.query().get("noOfSeats")
 
     const vehicleTypeFilter = vehicleTypeId ? `(v.vehicleTypes LIKE '%${vehicleTypeId}%')` : ""
-    const vehicleOptionFilter = vehicleOptionId ? `(v.vehicleOptions LIKE '%${vehicleOptionId}%')` : ""
+    const vehicleOptionFilter = vehicleOptionIds.length > 0 ? vehicleOptionIds.split(",").map(e => `(v.vehicleOptions LIKE '%${vehicleOptionIds}%')`).join(" AND ") : ""
     const agencyFilter = agencyId ? `(v.agencies LIKE '%${agencyId}%')` : ""
     const transmissionTypeFilter = transmissionType ? `(v.transmissionType = '${transmissionType}')` : ""
     const fuelTypeFilter = fuelType ? `(v.fuelType = '${fuelType}')` : ""
