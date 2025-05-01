@@ -16,9 +16,9 @@ routerAdd("GET", "/api/vehicles", (c) => {
     const noOfSeatsFilter = noOfSeats ? `(v.noOfSeats = ${Number(noOfSeats)})` : ""
 
     const filters = [
-        vehicleTypeFilter, 
-        vehicleOptionFilter, 
-        agencyFilter, 
+        vehicleTypeFilter,
+        vehicleOptionFilter,
+        agencyFilter,
         transmissionTypeFilter,
         fuelTypeFilter,
         noOfDoorsFilter,
@@ -67,6 +67,75 @@ routerAdd("GET", "/api/vehicles", (c) => {
                 noOfDoors: Number(c.noOfDoors),
                 noOfSeats: Number(c.noOfSeats),
                 minPrice: Number(c.minPrice)
+            }
+        })
+    })
+});
+
+routerAdd("GET", "/api/products", (c) => {
+    const productList = arrayOf(new DynamicModel({
+        id: '',
+        title: '',
+        summary: '',
+        image: '',
+        price: ''
+    }))
+
+    $app.db()
+        .newQuery(`
+            SELECT 
+                p.id,
+                p.title,
+                p.summary,
+                p.price,
+                '/api/files/images/' || i.id || '/' || coalesce(i.file, '') AS image
+            FROM products p
+            LEFT JOIN images i ON i.id = REPLACE(p.images ->> 0, '"', '')
+            GROUP BY p.id
+            ORDER BY p.created DESC 
+        `)
+        .all(productList)
+
+    return c.json(200, {
+        productList: productList.map(e => {
+            return {
+                ...e, price: Number(e.price)
+            }
+        })
+    })
+});
+
+routerAdd("GET", "/api/cart-products", (c) => {
+    let productIds = c.request.url.query().get("productIds")
+
+    const productList = arrayOf(new DynamicModel({
+        id: '',
+        title: '',
+        summary: '',
+        image: '',
+        price: ''
+    }))
+
+    $app.db()
+        .newQuery(`
+            SELECT 
+                p.id,
+                p.title,
+                p.summary,
+                p.price,
+                '/api/files/images/' || i.id || '/' || coalesce(i.file, '') AS image
+            FROM products p
+            LEFT JOIN images i ON i.id = REPLACE(p.images ->> 0, '"', '')
+            WHERE p.id IN ( ${productIds.split(",").map(e => `'${e}'`).join(",")} )
+            GROUP BY p.id
+            ORDER BY p.created DESC 
+        `)
+        .all(productList)
+
+    return c.json(200, {
+        productList: productList.map(e => {
+            return {
+                ...e, price: Number(e.price)
             }
         })
     })
